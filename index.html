@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>测一测你更像圣经里的谁？</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Noto+Serif+SC:wght@500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f4ee; --bg2:#efe9dd; --surface:#fffdf9; --surface2:#f3eee3;
+  --ink:#211c15; --ink2:#4a4236; --muted:#857a68;
+  --line:#ddd3bf; --line2:#cbbfa3;
+  --accent:#8a6d2f; --accent-ink:#6f5620; --accent-soft:#f0e6cf;
+  --btn:#211c15; --btn-ink:#f7f2e7;
+  --good:#3f6212;
+  --radius:18px;
+  --shadow:0 10px 30px rgba(60,48,20,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#161310; --bg2:#1d1915; --surface:#221e19; --surface2:#2a251f;
+    --ink:#f2ead9; --ink2:#d8cdb6; --muted:#a89a80;
+    --line:#3a332a; --line2:#574c3a;
+    --accent:#d3ab55; --accent-ink:#e8c87e; --accent-soft:#332b1c;
+    --btn:#e8c87e; --btn-ink:#1d180e;
+    --good:#a3c96b;
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",sans-serif;
+  line-height:1.65; font-size:16px;}
+button{font-family:inherit; cursor:pointer; min-height:44px;}
+.serif{font-family:"Noto Serif SC","Songti SC",serif;}
+.en .serif{font-family:"Cormorant Garamond","Noto Serif SC",serif;}
+
+.wrap{max-width:680px;margin:0 auto;padding:20px 18px 56px;}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0 18px;}
+.mark{display:flex;align-items:center;gap:9px;color:var(--ink2);font-size:13px;letter-spacing:.14em;}
+.mark .cross{width:30px;height:30px;border:1px solid var(--line2);border-radius:50%;display:grid;place-items:center;color:var(--accent);font-size:15px;background:var(--surface);}
+.lang-switch{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px;}
+.lang-switch button{border:0;background:transparent;color:var(--muted);border-radius:999px;padding:6px 16px;font-size:14px;min-height:38px;font-weight:600;}
+.lang-switch button.on{background:var(--btn);color:var(--btn-ink);}
+
+.screen{display:none}
+.screen.active{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.screen.active{animation:none}}
+
+/* Intro */
+.hero{padding:26px 4px 8px;text-align:center;}
+.hero .verse-top{color:var(--accent);font-size:13px;letter-spacing:.28em;margin-bottom:20px;}
+.hero h1{font-size:clamp(32px,8.4vw,46px);line-height:1.25;margin:0 0 14px;font-weight:900;letter-spacing:.01em;}
+.hero .sub{color:var(--ink2);font-size:16px;max-width:480px;margin:0 auto 8px;}
+.rule{width:56px;height:2px;background:var(--accent);margin:22px auto;border-radius:2px;opacity:.85}
+.quote{font-size:17px;color:var(--ink2);max-width:500px;margin:0 auto;}
+.quote small{display:block;margin-top:8px;color:var(--muted);font-size:13px;letter-spacing:.08em;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:26px 0 6px;}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink2);border-radius:999px;padding:7px 14px;font-size:13.5px;}
+.intro-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin:22px 0;box-shadow:var(--shadow);text-align:left;}
+.intro-card h3{margin:0 0 10px;font-size:16px;}
+.intro-card ul{margin:0;padding-left:20px;color:var(--ink2);font-size:14.5px;}
+.intro-card li{margin:5px 0;}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;border-radius:14px;padding:15px 20px;font-size:17px;font-weight:700;background:var(--btn);color:var(--btn-ink);min-height:54px;}
+.btn:active{transform:scale(.99)}
+.btn.secondary{background:var(--surface);color:var(--ink);border:1px solid var(--line2);}
+.btn.ghost{background:transparent;color:var(--ink2);border:1px solid var(--line);}
+.btn.small{font-size:15px;min-height:48px;padding:12px 16px;}
+.fineprint{color:var(--muted);font-size:12.5px;text-align:center;margin-top:14px;line-height:1.6;}
+
+/* Gender step */
+.gender-head{text-align:center;padding:30px 4px 6px;}
+.gender-head .q-kicker{margin-bottom:10px;}
+.gender-head h2{font-size:clamp(26px,7vw,34px);line-height:1.35;margin:0 0 10px;font-weight:900;}
+.gender-head p{color:var(--ink2);font-size:15.5px;max-width:460px;margin:0 auto;}
+.gender-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin:28px 0 8px;}
+.gender-card{background:var(--surface);border:1.5px solid var(--line);border-radius:20px;padding:28px 14px 24px;text-align:center;color:var(--ink);box-shadow:var(--shadow);transition:border-color .15s, background .15s;min-height:0;}
+.gender-card:hover{border-color:var(--accent);}
+.gender-card:active{transform:scale(.99);}
+.gender-card .g-seal{width:72px;height:72px;margin:0 auto 14px;border-radius:50%;background:var(--accent-soft);border:1.5px solid var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:32px;font-weight:900;}
+.gender-card .g-name{font-size:21px;font-weight:700;line-height:1.3;}
+.gender-card .g-en{color:var(--muted);font-size:13px;letter-spacing:.14em;margin-top:4px;}
+.gender-card .g-pool{color:var(--ink2);font-size:13px;margin-top:12px;line-height:1.6;}
+.gender-card .g-name,.gender-card .g-en,.gender-card .g-pool{display:block;}
+@media (max-width:380px){.gender-grid{grid-template-columns:1fr 1fr;gap:10px}.gender-card{padding:22px 8px 18px}.gender-card .g-seal{width:60px;height:60px;font-size:27px}}
+
+/* Quiz */
+.progress-row{display:flex;align-items:baseline;justify-content:space-between;margin:8px 2px 10px;}
+.progress-row .qcount{font-size:14px;color:var(--muted);letter-spacing:.06em;}
+.progress-row .qcount b{color:var(--ink);font-size:17px;}
+.bar{height:6px;background:var(--surface2);border:1px solid var(--line);border-radius:99px;overflow:hidden;margin-bottom:28px;}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .35s ease;width:0}
+.q-kicker{color:var(--accent);font-size:12.5px;letter-spacing:.24em;margin-bottom:10px;font-weight:700;}
+.q-title{font-size:clamp(22px,6vw,27px);line-height:1.45;margin:0 0 22px;font-weight:700;}
+.opts{display:flex;flex-direction:column;gap:11px;}
+.opt{display:flex;align-items:flex-start;gap:12px;text-align:left;width:100%;background:var(--surface);border:1.5px solid var(--line);border-radius:15px;padding:16px 16px;font-size:16px;line-height:1.55;color:var(--ink);transition:border-color .15s, background .15s;min-height:56px;}
+.opt .dot{flex:0 0 auto;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line2);margin-top:2px;display:grid;place-items:center;font-size:12px;color:transparent;}
+.opt:hover{border-color:var(--accent)}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft);}
+.opt.sel .dot{background:var(--accent);border-color:var(--accent);color:#fff;}
+.quiz-nav{display:flex;justify-content:space-between;align-items:center;margin-top:24px;}
+.link-btn{background:none;border:0;color:var(--muted);font-size:15px;padding:10px 6px;min-height:44px;}
+.link-btn:disabled{opacity:.35}
+
+/* Result */
+.result-hero{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:30px 22px 26px;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+.result-hero:before{content:"";position:absolute;inset:10px;border:1px solid var(--line);border-radius:15px;pointer-events:none;}
+.seal{width:76px;height:76px;margin:2px auto 16px;border-radius:50%;background:var(--accent-soft);border:1.5px solid var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:34px;font-weight:900;}
+.result-hero .you-are{color:var(--muted);font-size:13.5px;letter-spacing:.22em;margin-bottom:6px;}
+.result-hero h2{font-size:clamp(36px,10vw,48px);margin:0;line-height:1.15;font-weight:900;}
+.result-hero .epithet{color:var(--accent-ink);font-size:17px;margin-top:8px;font-weight:600;}
+.result-hero .tagline{color:var(--ink2);font-size:15.5px;max-width:460px;margin:14px auto 0;}
+.match-note{margin-top:16px;display:inline-block;background:var(--surface2);border:1px solid var(--line);color:var(--ink2);border-radius:999px;padding:6px 14px;font-size:13px;}
+.section{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-top:16px;box-shadow:var(--shadow);}
+.section h3{margin:0 0 12px;font-size:18px;display:flex;align-items:center;gap:9px;}
+.section h3 .ic{color:var(--accent);font-size:17px;}
+.section p{margin:0 0 10px;color:var(--ink2);font-size:15.5px;}
+.section p:last-child{margin-bottom:0}
+.section ul{margin:0;padding-left:20px;color:var(--ink2);font-size:15.5px;}
+.section li{margin:6px 0;}
+.section li b{color:var(--ink);}
+.verse-box{background:var(--accent-soft);border-radius:14px;padding:18px;text-align:center;}
+.verse-box .v{font-size:18px;color:var(--ink);line-height:1.6;}
+.verse-box .ref{color:var(--accent-ink);font-size:13.5px;margin-top:8px;letter-spacing:.06em;}
+.trait-row{display:flex;align-items:center;gap:10px;margin:9px 0;font-size:14px;}
+.trait-row .tname{flex:0 0 86px;color:var(--ink2);}
+.trait-row .tbar{flex:1;height:9px;background:var(--surface2);border:1px solid var(--line);border-radius:99px;overflow:hidden;}
+.trait-row .tbar i{display:block;height:100%;background:var(--accent);border-radius:99px;}
+.trait-row .tpct{flex:0 0 38px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums;}
+.trait-row.top .tname{color:var(--ink);font-weight:700;}
+.practice{background:var(--surface2);border:1px dashed var(--line2);border-radius:14px;padding:16px 18px;}
+.practice p{font-size:15px;}
+.share-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:16px;}
+.share-grid .full{grid-column:1/-1;}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:11px 20px;border-radius:999px;font-size:14.5px;opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:88vw;text-align:center;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.footer-note{text-align:center;color:var(--muted);font-size:12.5px;margin-top:30px;line-height:1.7;}
+@media (max-width:380px){.share-grid{grid-template-columns:1fr}.trait-row .tname{flex-basis:72px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="mark"><span class="cross">✝</span><span id="brandText">趣味测试 · FUN QUIZ</span></div>
+    <div class="lang-switch" role="group" aria-label="Language">
+      <button id="langZh" class="on" type="button">中文</button>
+      <button id="langEn" type="button">EN</button>
+    </div>
+  </div>
+
+  <!-- INTRO -->
+  <section id="screen-intro" class="screen active">
+    <div class="hero">
+      <div class="verse-top" id="heroKicker">圣 经 人 物 · 趣 味 测 试</div>
+      <h1 class="serif" id="heroTitle">测一测你更像<br>圣经里的谁？</h1>
+      <p class="sub" id="heroSub">10 道题，照着直觉选。没有对错，看看哪位圣经人物的性格与信仰气质，和现在的你最相像。</p>
+      <div class="rule"></div>
+      <p class="quote serif" id="heroQuote">“我们晓得万事都互相效力，叫爱神的人得益处。”<small id="heroQuoteRef">罗马书 8:28</small></p>
+      <div class="chips">
+        <span class="chip" id="chip1">✦ 10 道选择题</span>
+        <span class="chip" id="chip2">✦ 约 3 分钟</span>
+        <span class="chip" id="chip3">✦ 中 / 英双语</span>
+        <span class="chip" id="chip4">✦ 附信仰状态解析</span>
+      </div>
+    </div>
+    <div class="intro-card">
+      <h3 class="serif" id="howTitle">怎么测？</h3>
+      <ul id="howList">
+        <li>每道题 5 个选项，选<b>最像你平常反应</b>的那一个，不要选“应该选”的。</li>
+        <li>题目和选项里<b>不会出现任何人物名字</b>，结果揭晓前，你不会知道自己像谁。</li>
+        <li>测完会得到专属结果卡：人物故事、你的信仰优势、成长空间和一份信仰状态解析。</li>
+      </ul>
+    </div>
+    <button class="btn" id="startBtn" type="button">开始测试 →</button>
+    <p class="fineprint" id="introFine">本测试仅供趣味参考与自我认识，不能替代牧者辅导与真实的信仰生活。</p>
+  </section>
+
+  <!-- GENDER -->
+  <section id="screen-gender" class="screen">
+    <div class="gender-head">
+      <div class="q-kicker" id="genderKicker">开始之前 · BEFORE WE START</div>
+      <h2 class="serif" id="genderTitle">先选一下你的性别</h2>
+      <p id="genderSub">结果会按照你的性别，从同性别的圣经人物中为你匹配——男生和女生的候选人物各不相同。</p>
+    </div>
+    <div class="gender-grid">
+      <button class="gender-card" id="genderMale" type="button">
+        <span class="g-seal serif">男</span>
+        <span class="g-name" id="maleName">我是男生</span>
+        <span class="g-en">MALE</span>
+        <span class="g-pool" id="malePool">从 5 位男性圣经人物中匹配</span>
+      </button>
+      <button class="gender-card" id="genderFemale" type="button">
+        <span class="g-seal serif">女</span>
+        <span class="g-name" id="femaleName">我是女生</span>
+        <span class="g-en">FEMALE</span>
+        <span class="g-pool" id="femalePool">从 5 位女性圣经人物中匹配</span>
+      </button>
+    </div>
+    <p class="fineprint" id="genderNote">选错了也没关系：答题中点「重新开始」，就能回到这里重新选择。</p>
+    <div class="quiz-nav">
+      <button class="link-btn" id="genderBackBtn" type="button">← 返回</button>
+      <span></span>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="screen-quiz" class="screen">
+    <div class="progress-row">
+      <span class="qcount" id="qCount"></span>
+      <span class="qcount" id="qPct"></span>
+    </div>
+    <div class="bar"><i id="barFill"></i></div>
+    <div class="q-kicker" id="qKicker">凭直觉选 · TRUST YOUR INSTINCT</div>
+    <h2 class="q-title serif" id="qTitle"></h2>
+    <div class="opts" id="opts"></div>
+    <div class="quiz-nav">
+      <button class="link-btn" id="backBtn" type="button">← 上一题</button>
+      <button class="link-btn" id="restartBtn1" type="button">重新开始</button>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="screen-result" class="screen">
+    <div class="result-hero">
+      <div class="seal serif" id="rSeal">大</div>
+      <div class="you-are" id="rYouAre">你 最 像 的 是</div>
+      <h2 class="serif" id="rName">大卫</h2>
+      <div class="epithet serif" id="rEpithet"></div>
+      <p class="tagline" id="rTagline"></p>
+      <div><span class="match-note" id="rMatch"></span></div>
+    </div>
+
+    <div class="section">
+      <h3 class="serif"><span class="ic">❧</span><span id="sStoryT">祂的故事</span></h3>
+      <p id="rStory"></p>
+    </div>
+
+    <div class="section">
+      <h3 class="serif"><span class="ic">◈</span><span id="sTraitT">你的信仰特质分布</span></h3>
+      <div id="traitBars"></div>
+      <p id="traitNote" style="font-size:13.5px;color:var(--muted);margin-top:10px;"></p>
+    </div>
+
+    <div class="section">
+      <h3 class="serif"><span class="ic">✦</span><span id="sStrengthT">你的信仰优势</span></h3>
+      <ul id="rStrengths"></ul>
+    </div>
+
+    <div class="section">
+      <h3 class="serif"><span class="ic">◎</span><span id="sFaithT">你的信仰状态解析</span></h3>
+      <p id="rFaith"></p>
+    </div>
+
+    <div class="section">
+      <h3 class="serif"><span class="ic">△</span><span id="sGrowthT">值得留意的成长空间</span></h3>
+      <p id="rGrowth"></p>
+    </div>
+
+    <div class="section">
+      <h3 class="serif"><span class="ic">✎</span><span id="sPracticeT">给你的本周操练</span></h3>
+      <div class="practice"><p id="rPractice" style="margin:0"></p></div>
+    </div>
+
+    <div class="section">
+      <div class="verse-box">
+        <div class="v serif" id="rVerse"></div>
+        <div class="ref" id="rVerseRef"></div>
+      </div>
+    </div>
+
+    <button class="btn" id="shareBtn" type="button" style="margin-top:20px;">📤 <span id="shareBtnT">分享我的结果</span></button>
+    <div class="share-grid">
+      <button class="btn secondary small" id="cardBtn" type="button">🖼 <span id="cardBtnT">保存结果卡片</span></button>
+      <button class="btn secondary small" id="copyBtn" type="button">⧉ <span id="copyBtnT">复制分享文案</span></button>
+      <button class="btn ghost small full" id="retakeBtn" type="button">↺ <span id="retakeBtnT">再测一次</span></button>
+    </div>
+    <p class="fineprint" id="wechatHint">在微信里打开本页时：点右上角「···」可直接转发给好友或分享到朋友圈；也可以保存结果卡片图片，再发给朋友。</p>
+
+    <p class="footer-note" id="footerNote">仅供娱乐与自我认识 · 愿你在认识自己的同时，更认识那位爱你的神。</p>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
+<canvas id="cardCanvas" width="750" height="1080" style="display:none"></canvas>
+
+<script>
+/* ============ DATA ============ */
+var CHARS = {
+  d:{ seal:{zh:"大",en:"D"},
+    name:{zh:"大卫",en:"David"},
+    epithet:{zh:"合神心意的人 · 勇敢的敬拜者",en:"A Man After God's Own Heart · The Brave Worshipper"},
+    tagline:{zh:"你心里有一团火：遇到事不躲，难过时不装，敬拜时全心投入。你的真诚和勇气，常常先感动自己，也感染身边的人。",en:"There is a fire in you: you don't hide from trouble, you don't fake it when you're down, and you worship with your whole heart. Your honesty and courage move you first — and then everyone around you."},
+    story:{zh:"他原是伯利恒的牧羊少年，不被看好，却在旷野里学会了依靠与敬拜。面对巨人时他没有退缩，做王之后也曾跌倒得很重，但他不掩饰、不逃避，写下大量真诚悔改与赞美的诗篇。他的伟大不在于从不失败，而在于每次跌倒后，都真实地回到神面前。",en:"He began as an overlooked shepherd boy in Bethlehem who learned trust and worship in the wilderness. He faced a giant without flinching, and as king he fell hard — yet he never hid or ran from God. He poured his repentance and praise into psalms. His greatness was not that he never failed, but that every time he fell, he honestly came back."},
+    strengths:{zh:["<b>勇气真实</b>：不怕面对问题，也不怕承认软弱","<b>敬拜亲近</b>：情绪高低都愿意来到神面前","<b>悔改迅速</b>：错了就认，很快重新对齐方向"],en:["<b>Brave and honest</b> — you face problems head-on and admit weakness freely","<b>Close in worship</b> — in highs and lows, you still come to God","<b>Quick to repent</b> — when you're wrong, you own it and realign fast"]},
+    faith:{zh:"你目前的信仰状态偏向“热情而真实”：你和神的关系不是客套式的，祷告和敬拜是你真实的出口。顺境时你信心充足、乐意服侍；需要留意的是低谷期——当情绪退潮、环境不顺时，你的信心容易跟着起伏，甚至冲动做决定。你的信仰根基是有的，接下来要长的，是在没有感觉、没有掌声的日子里，依然稳定地跟随。",en:"Your faith right now is passionate and real: your relationship with God is no formality — prayer and worship are your genuine outlet. In good seasons you're full of faith and eager to serve. Watch the valleys, though: when feelings fade and circumstances turn, your confidence can swing with your mood, and you may act on impulse. Your foundation is real; what grows next is steady following on days with no feelings and no applause."},
+    growth:{zh:"冲动是你的双刃剑：它让你敢为人先，也可能让你在情绪里说错话、做错决定。另外，你容易把“感觉亲近”当作信仰的温度计——感觉不到时就怀疑自己。试着在行动前多停留一天祷告，也为自己的情绪找一个可以倾诉的属灵伙伴。",en:"Impulsiveness is your double-edged sword: it makes you first to step up, but it can also make you speak or decide out of raw emotion. You may also treat 'feeling close' as your faith thermometer — and doubt yourself when you feel nothing. Try waiting a full day in prayer before big moves, and find a trusted spiritual friend for your emotional ups and downs."},
+    practice:{zh:"本周选一个安静的早晨，读一篇诗篇，仿照它写下 5 句属于你自己的祷告——开心、委屈、疑惑都可以写，不修饰、不美化，只写真话。",en:"This week, pick one quiet morning, read a psalm, then write five lines of your own prayer in its spirit — joy, grievance, confusion, all of it. No polishing, no performing. Just the truth."},
+    verse:{zh:"“耶和华是我的牧者，我必不致缺乏。”",en:"“The Lord is my shepherd; I shall not want.”"},
+    verseRef:{zh:"诗篇 23:1",en:"Psalm 23:1"}
+  },
+  m:{ seal:{zh:"摩",en:"M"},
+    name:{zh:"摩西",en:"Moses"},
+    epithet:{zh:"谦和的带领者 · 耐心的代祷者",en:"The Meek Leader · The Patient Intercessor"},
+    tagline:{zh:"你不抢风头，却总在关键处稳住全场。你做事有方向、有耐心，大家愿意跟着你走，因为你让人安心。",en:"You don't chase the spotlight, yet you steady the room when it matters. You move with direction and patience — people follow you because you make them feel safe."},
+    story:{zh:"他自认拙口笨舌，一再推辞，却被拣选带领一整个民族出埃及。在旷野四十年里，他无数次为百姓代祷，忍受抱怨，仍把人带向应许之地。他被称为世上最谦和的人——他的力量不在口才，而在顺服、忍耐与长久的代求。",en:"He called himself slow of speech and kept declining, yet he was chosen to lead a whole nation out of Egypt. Through forty wilderness years he interceded again and again for a complaining people and kept them moving toward the promise. He was called the meekest man on earth — his strength was never eloquence, but obedience, endurance, and persistent prayer."},
+    strengths:{zh:["<b>稳重可靠</b>：情绪稳定，答应的事一定做到","<b>有方向感</b>：能在混乱中看清下一步","<b>忍耐代求</b>：愿意为别人长久地祷告和守候"],en:["<b>Steady and reliable</b> — calm under pressure; what you promise, you deliver","<b>Clear sense of direction</b> — you can see the next step in the middle of chaos","<b>Patient intercessor</b> — willing to pray and wait for others over the long haul"]},
+    faith:{zh:"你目前的信仰状态偏向“稳定而内敛”：你不是靠热情推动的人，而是靠责任感和顺服走下去，这让你在长期里非常可靠。需要留意的是，你容易把担子都揽在自己身上，累了也不说，甚至觉得“向神推辞、觉得自己不行”比开口求助更熟悉。你的下一步成长，是学会交托与分担——带领不等于独扛，也要允许别人陪你一起走。",en:"Your faith right now is steady and quiet: you're not driven by hype but by responsibility and obedience, which makes you deeply reliable over the long run. The watch-out: you tend to carry every burden yourself, stay silent when you're exhausted, and 'I'm not able' feels more familiar than asking for help. Your next growth step is learning to hand over and share the load — leading doesn't mean carrying alone."},
+    growth:{zh:"你可能会因为“觉得自己不够格”而错过神给的机会，像起初的推辞一样。也要小心把服侍做成苦差：当只剩责任、没有喜乐时，记得先回到神面前支取力量，而不是硬撑。",en:"You may miss opportunities God gives because you feel unqualified — the same hesitation you started with. Also beware of service becoming pure drudgery: when only duty remains and joy is gone, return to God for strength first instead of just pushing through."},
+    practice:{zh:"本周找一件你一直独扛的小事，主动开口请一位弟兄姊妹分担；另外，每天留 10 分钟什么都不做，只安静地把一件挂心的事交托出去。",en:"This week, take one thing you've been carrying alone and actually ask a brother or sister to share it. And each day, spend ten minutes doing nothing but quietly handing one worry over."},
+    verse:{zh:"“耶和华必为你们争战，你们只管静默，不要作声。”",en:"“The Lord will fight for you; you need only to be still.”"},
+    verseRef:{zh:"出埃及记 14:14",en:"Exodus 14:14"}
+  },
+  r:{ seal:{zh:"得",en:"R"},
+    name:{zh:"路得",en:"Ruth"},
+    epithet:{zh:"忠诚的陪伴者 · 温柔而坚定",en:"The Loyal Companion · Gentle and Steadfast"},
+    tagline:{zh:"你最珍贵的地方是“不离开”。热闹时你不显眼，低谷时你却在场——你的陪伴本身，就是很多人得安慰的原因。",en:"Your most precious quality is that you stay. You're not the loudest in good times, but in the valleys you're there — and your presence itself is why many people find comfort."},
+    story:{zh:"她是外邦女子，丧夫之后本可回到自己的故乡，却选择陪伴孤苦的婆婆，去到陌生的土地。她不说大话，只是在日常里拾麦穗、尽本分、忠诚到底。这份不起眼的忠诚，最终让她被记在弥赛亚的家谱之中——平凡的陪伴，成就了不平凡的故事。",en:"A foreign widow who could have gone home, she instead chose to stay with her bereaved mother-in-law and travel to a strange land. She made no grand speeches — she simply gleaned in the fields, did her part, and stayed loyal to the end. That unremarkable loyalty placed her in the Messiah's own family line: ordinary faithfulness, woven into an extraordinary story."},
+    strengths:{zh:["<b>忠诚到底</b>：认定的人和事，不轻易放弃","<b>温柔体贴</b>：总能察觉别人没说出口的需要","<b>踏实尽责</b>：在小事上忠心，不挑环境"],en:["<b>Loyal to the end</b> — you don't give up on people or commitments easily","<b>Gentle and perceptive</b> — you notice needs others never say out loud","<b>Faithful in small things</b> — diligent and dependable whatever the setting"]},
+    faith:{zh:"你目前的信仰状态偏向“生活化而扎实”：你的信仰不在台上，而在日常的饭桌、陪伴和守约里，这非常宝贵。需要留意的是，你太习惯照顾别人，容易忽略自己的需要和界限，累积到最后会委屈、会耗尽。也请记得：你不只是“付出的人”，你同样是值得被爱、被照顾、被神亲自安慰的人。",en:"Your faith right now is lived-in and grounded: it shows not on a stage but at the dinner table, in staying present, in keeping your word — and that is precious. The watch-out: you're so used to caring for others that you neglect your own needs and boundaries, until resentment and burnout quietly build up. Remember: you are not only 'the one who gives' — you are also someone worthy of being loved, cared for, and comforted by God Himself."},
+    growth:{zh:"你可能会因为怕麻烦别人而从不开口求助，也可能把自我价值建立在“被需要”上。当没人需要你时，试着依然相信：你在神眼中的价值，不取决于你做了多少。",en:"You may never ask for help for fear of troubling others, and you may build your sense of worth on being needed. When no one needs you, practice believing this: your value in God's eyes does not depend on how much you do."},
+    practice:{zh:"本周做一件“只为自己”的小事：一顿好好吃的饭、一次散步、一个不被打扰的下午茶；并在祷告中练习说一句：“主啊，今天我也需要祢抱抱我。”",en:"This week, do one small thing purely for yourself — a meal you truly enjoy, a walk, an undisturbed afternoon tea. And in prayer, practice saying: 'Lord, today I need You to hold me, too.'"},
+    verse:{zh:"“你往哪里去，我也往哪里去；你在哪里住宿，我也在哪里住宿。”",en:"“Where you go I will go, and where you stay I will stay.”"},
+    verseRef:{zh:"路得记 1:16",en:"Ruth 1:16"}
+  },
+  p:{ seal:{zh:"保",en:"P"},
+    name:{zh:"保罗",en:"Paul"},
+    epithet:{zh:"热情的行动者 · 向着标竿直跑",en:"The Passionate Messenger · Pressing Toward the Goal"},
+    tagline:{zh:"你想到就去做，心里有火、脚下有风。你的热情有感染力，能把一群人从“想想而已”带到“真的动起来”。",en:"You act the moment you're convinced — fire in your heart, wind at your feet. Your passion is contagious: you turn a group from 'someday, maybe' into 'let's actually do this.'"},
+    story:{zh:"他曾经逼迫教会，却在路上被光照亮，人生彻底转向。此后他走遍各地传讲福音，坐牢、被打、遇船难都不改其志，还写下新约中大量的书信。他的一生是“向着标竿直跑”的一生——清楚的目标、惊人的行动力，和至死不变的热心。",en:"He once persecuted the church — until a light on the road turned his whole life around. After that he travelled everywhere proclaiming the good news; prison, beatings and shipwreck never changed his course, and he wrote much of the New Testament. His life was one long press toward the goal: a clear target, astonishing drive, and a zeal that never cooled."},
+    strengths:{zh:["<b>行动力强</b>：不拖延，认定方向就全力以赴","<b>目标清晰</b>：知道自己为什么而忙，不易被带偏","<b>感染力佳</b>：你的热心能点燃整个团队"],en:["<b>Highly driven</b> — no procrastination; once convinced, you're all in","<b>Clear sense of purpose</b> — you know what your busyness is for","<b>Contagious zeal</b> — your passion lights up the whole team"]},
+    faith:{zh:"你目前的信仰状态偏向“火热而外展”：你乐意分享、乐意服侍，信仰对你而言是行动而不是理论。需要留意的是节奏——长期高速运转容易让你忽略安息与内在生命，只剩“做”而缺少“在”。也请留意说话的锋芒：真理需要讲，但带着恩典讲，人才听得进去。你的下一步，是在热心里加上节制与安静。",en:"Your faith right now is fervent and outward-facing: you love to share and to serve — for you, faith is action, not theory. The watch-out is pace: running at full speed for too long can crowd out rest and inner life, leaving only 'doing' and no 'being'. Mind the sharp edge of your words, too: truth must be spoken, but spoken with grace if people are to receive it. Your next step is adding restraint and stillness to your zeal."},
+    growth:{zh:"你可能因为太在意果效而焦虑：做得多却看不到改变时，容易灰心或对人失去耐心。记得你只负责忠心地撒种和浇灌，生长从来不在你的 KPI 里。",en:"You may grow anxious over results: when you do a lot but see little change, discouragement — or impatience with people — can creep in. Remember, your job is faithful sowing and watering; the growing was never your KPI."},
+    practice:{zh:"本周给自己安排一次真正的安息：半天不处理任何服侍消息，只散步、休息、亲近神；并把一件你最在意果效的事，在祷告中正式“交账”给神。",en:"This week, take a real Sabbath: half a day with no ministry messages — just walk, rest, and be with God. And in prayer, formally hand over the one outcome you've been gripping tightest."},
+    verse:{zh:"“忘记背后，努力面前的，向着标竿直跑。”",en:"“Forgetting what is behind and straining toward what is ahead, I press on toward the goal.”"},
+    verseRef:{zh:"腓立比书 3:13–14",en:"Philippians 3:13–14"}
+  },
+  e:{ seal:{zh:"斯",en:"E"},
+    name:{zh:"以斯帖",en:"Esther"},
+    epithet:{zh:"勇气藏在时机里 · 沉静而果断",en:"Courage in Perfect Timing · Calm and Decisive"},
+    tagline:{zh:"你平时安静低调，不争不抢；但到了关键时刻，你从不缺席。你的勇气不靠声量，靠的是看准时机后果断站出来。",en:"You're quiet and low-key most of the time, never fighting for the spotlight. But when the moment comes, you never go missing. Your courage isn't loud — it's the decisiveness to stand up at exactly the right time."},
+    story:{zh:"她是流亡在外的孤女，被选入宫中成为王后。当民族面临灭顶之灾时，她深知冒然进宫可能丧命，却在禁食祷告之后说出“死就死吧”，在最恰当的时机开口求情，扭转了整个民族的命运。她的故事说明：安静的人，也可以在历史上留下最响亮的一步。",en:"An orphaned exile chosen to become queen, she faced a moment when her people stood under a decree of destruction. Knowing that approaching the king uninvited could cost her life, she fasted and prayed, said 'if I perish, I perish,' and spoke at precisely the right moment — turning the fate of a nation. Her story proves a quiet person can take the loudest step in history."},
+    strengths:{zh:["<b>沉着智慧</b>：越大的事越冷静，善于判断时机","<b>关键时刻果断</b>：平时不抢话，该站出来时毫不犹豫","<b>顾全大局</b>：不只想自己，也为身边的人担当"],en:["<b>Calm and wise</b> — the bigger the moment, the steadier you are; you read timing well","<b>Decisive when it counts</b> — quiet normally, unhesitating when it matters","<b>Sees the bigger picture</b> — you carry responsibility for others, not just yourself"]},
+    faith:{zh:"你目前的信仰状态偏向“内敛而有深度”：你不常把信仰挂在嘴边，但在大事上你会认真祷告、谨慎抉择，这份敬畏非常可贵。需要留意的是，你太习惯等待“完美时机”，有时会把拖延误认为谨慎，把沉默误认为平安。若心里已经清楚该做的事，勇敢开口本身，往往就是那个对的时机。",en:"Your faith right now is reserved but deep: you don't wear it on your sleeve, yet on big matters you pray seriously and choose carefully — a reverence worth treasuring. The watch-out: you're so used to waiting for the 'perfect moment' that delay can disguise itself as prudence, and silence as peace. When you already know what must be done, speaking up is often the right timing itself."},
+    growth:{zh:"你可能因为怕冲突、怕出错，而把真实想法一直藏着，最后错过帮助人或保护人的机会。也请小心：低调不等于隐藏——你的经历和声音，本身就是神要使用的。",en:"Fear of conflict or of getting it wrong may keep your real thoughts hidden until the chance to help or protect someone has passed. And remember: being low-key doesn't mean staying invisible — your story and your voice are part of what God wants to use."},
+    practice:{zh:"本周想一件你心里清楚、却一直没开口的事：先为它祷告三天，然后在本周内，用温和而清楚的方式说出来或做出来——哪怕只是一小步。",en:"This week, name one thing you know in your heart but haven't voiced. Pray over it for three days, then — within the week — say it or do it, gently and clearly. Even one small step counts."},
+    verse:{zh:"“焉知你得了王后的位分，不是为现今的机会吗？”",en:"“Who knows but that you have come to your royal position for such a time as this?”"},
+    verseRef:{zh:"以斯帖记 4:14",en:"Esther 4:14"}
+  }
+};
+
+/* ---- Gender-specific additions: same five faith temperaments, matched within the user's gender ---- */
+/* Male pool adds Joseph (for the loyal/faithful temperament) and Daniel (for wisdom/timing).
+   Female pool adds Mary (courage/worship), Hannah (steadiness/prayer) and Deborah (zeal/action). */
+var CHAR_JOSEPH = { seal:{zh:"瑟",en:"J"},
+  name:{zh:"约瑟",en:"Joseph"},
+  epithet:{zh:"在苦难里仍忠心的人 · 饶恕与供应者",en:"Faithful Through Suffering · The Forgiving Provider"},
+  tagline:{zh:"你不张扬，却在小事上极其可靠；受了委屈也不急着报复，而是把公道交托出去，继续忠心地把手边的事做好。",en:"You're not showy, but you are deeply reliable in small things. Wronged, you don't rush to retaliate — you entrust justice to God and keep doing the work in front of you, faithfully."},
+  story:{zh:"他年少时被亲兄弟卖到埃及，又被诬陷入狱，前后十多年看不见出路。但无论在奴仆、囚犯还是宰相的位置上，他都忠心尽责、持守正直。最终他不但救了全地度过饥荒，也饶恕了伤害他的兄弟，说出：“从前你们的意思是要害我，但神的意思原是好的。”",en:"Sold into Egypt by his own brothers as a teenager and later falsely imprisoned, he saw no way out for more than a decade. Yet as slave, prisoner, and finally governor, he stayed faithful and upright in every place. In the end he saved a whole region from famine — and forgave the brothers who hurt him: 'You intended to harm me, but God intended it for good.'"},
+  strengths:{zh:["<b>小事忠心</b>：没人看见的时候，标准也不降低","<b>正直自持</b>：在试探和委屈面前守得住界限","<b>愿意饶恕</b>：不被过去的伤害定义一生"],en:["<b>Faithful in small things</b> — your standard doesn't drop when no one is watching","<b>Integrity under pressure</b> — you hold your boundaries in temptation and injustice","<b>Willing to forgive</b> — you refuse to let old wounds define your life"]},
+  faith:{zh:"你目前的信仰状态偏向“安静而扎实”：你的信仰不在言语上，而在日复一日的忠心和可靠里，这非常难得。需要留意的是，委屈你常常自己消化，很少向人倾诉，久了心里会积压苦毒。你的下一步成长，是在忠心之外也学习敞开——让可信任的人知道你的难处，也让神亲自安慰你。",en:"Your faith right now is quiet and solid: it lives not in big words but in day-after-day faithfulness and reliability — and that is rare and precious. The watch-out: you tend to digest grievances alone and rarely open up, so bitterness can quietly accumulate. Your next growth step, alongside faithfulness, is openness — let trusted people know your hardships, and let God comfort you Himself."},
+  growth:{zh:"你可能会把“忍耐”变成“硬扛”，把什么都不说当作属灵。其实忠心也包括诚实地表达需要。也要小心用忙碌逃避情绪：停下来处理内心的伤，并不耽误你手中的事。",en:"You may turn 'endurance' into simply gritting your teeth, treating silence as spirituality. But faithfulness also includes honestly naming your needs. And beware of using busyness to dodge your feelings — pausing to tend an inner wound won't derail the work in your hands."},
+  practice:{zh:"本周找一位你信任的人，坦诚说一件你独自扛了很久的难处；并为一位曾经伤害过你的人做一次简短的祝福祷告，哪怕心里还没有完全的感觉。",en:"This week, honestly share one burden you've carried alone with someone you trust. And pray one short prayer of blessing for someone who once hurt you — even if the feelings haven't caught up yet."},
+  verse:{zh:"“从前你们的意思是要害我，但神的意思原是好的。”",en:"“You intended to harm me, but God intended it for good.”"},
+  verseRef:{zh:"创世记 50:20",en:"Genesis 50:20"}
+};
+var CHAR_DANIEL = { seal:{zh:"理",en:"D"},
+  name:{zh:"但以理",en:"Daniel"},
+  epithet:{zh:"在异乡持守信仰的人 · 有智慧有胆量",en:"Faithful in a Foreign Land · Wise and Courageous"},
+  tagline:{zh:"你冷静、有主见，越是环境复杂越不随波逐流。你不轻易开口，但开口时有分量；该持守的原则，你一步也不退。",en:"You're calm and clear-minded, and the messier the environment, the less you drift with the crowd. You don't speak lightly — but when you do, it carries weight. And on principles that matter, you don't move an inch."},
+  story:{zh:"他少年时被掳到巴比伦，在异乡的王宫里长大。面对王的食物、王的命令乃至狮子坑的威胁，他始终有智慧地持守信仰：不争吵、不妥协，一日三次照常祷告。他的敬虔与智慧赢得了历代君王的信任，也让外邦人看见了他所信的神。",en:"Taken to Babylon as a teenager, he grew up in a foreign palace. Faced with the king's food, the king's decrees, and even a den of lions, he held his faith with wisdom: no quarrelling, no compromise, praying three times a day as always. His devotion and wisdom won the trust of successive kings — and showed a foreign nation his God."},
+  strengths:{zh:["<b>有原则有智慧</b>：知道什么可以变通，什么绝不能让步","<b>情绪稳定</b>：压力越大越冷静，判断越清楚","<b>祷告恒切</b>：环境再忙，也守住与神独处的时间"],en:["<b>Principled and wise</b> — you know what can flex and what must never bend","<b>Steady under pressure</b> — the greater the pressure, the calmer and clearer you are","<b>Constant in prayer</b> — however busy life gets, you guard your time with God"]},
+  faith:{zh:"你目前的信仰状态偏向“自律而坚定”：你有稳定的灵修习惯和清晰的界限，这让你的信仰经得起环境考验。需要留意的是，你容易把信仰过成“一个人的坚持”，不太向人敞开软弱，也较少与人分享内心的挣扎。你的下一步成长，是在持守之外加上连结——找到能一起祷告、彼此守望的伙伴。",en:"Your faith right now is disciplined and firm: steady devotional habits and clear boundaries make it able to withstand a hostile environment. The watch-out: your faith can become a solo endeavour — you rarely open up about weakness or share your inner struggles. Your next growth step adds connection to conviction: find companions who pray with you and watch over one another."},
+  growth:{zh:"你可能因为太理性，而忽略情绪和关系的需要；也可能因为标准清晰，对不够自律的人缺少耐心。试着记住：智慧不只是判断对错，也包括用温柔对待与你节奏不同的人。",en:"Being highly rational, you may overlook emotional and relational needs — and your clear standards may leave you impatient with less disciplined people. Remember: wisdom isn't only judging right from wrong; it's also gentleness toward people whose pace differs from yours."},
+  practice:{zh:"本周固定一个祷告时段，哪怕只有 10 分钟，雷打不动地守住；另外，主动约一位朋友，分享一件你最近真实的挣扎，请他为你祷告。",en:"This week, fix one prayer slot — even just ten minutes — and keep it no matter what. Then invite a friend, share one real struggle you're carrying, and ask them to pray for you."},
+  verse:{zh:"“但以理却立志，不以王的膳和王所饮的酒玷污自己。”",en:"“Daniel resolved not to defile himself with the royal food and wine.”"},
+  verseRef:{zh:"但以理书 1:8",en:"Daniel 1:8"}
+};
+var CHAR_MARY = { seal:{zh:"亚",en:"M"},
+  name:{zh:"马利亚",en:"Mary"},
+  epithet:{zh:"勇敢说「我愿意」的人 · 歌唱信靠的人",en:"She Who Bravely Said 'Yes' · The Singer of Trust"},
+  tagline:{zh:"你心里有一团火：遇到事不躲，难过时不装，敬拜时全心投入。你的真诚和勇气，常常先感动自己，也感染身边的人。",en:"There is a fire in you: you don't hide from trouble, you don't fake it when you're down, and you worship with your whole heart. Your honesty and courage move you first — and then everyone around you."},
+  story:{zh:"她原是拿撒勒一位平凡的少女，面对突如其来、可能带来误解与风险的托付，她在敬畏中勇敢地说出：“情愿照你的话成就在我身上。”她以一首发自心底的尊主颂回应这份呼召，此后无论顺境逆境，都安静而坚定地陪伴、守望，直到十字架下也不离开。",en:"She was an ordinary young woman of Nazareth when a calling arrived that could bring misunderstanding and real risk. In reverence she bravely answered: 'May your word to me be fulfilled.' She responded with the Magnificat, a song from the depths of her heart — and from then on, in good seasons and bad, she stayed and watched quietly and steadfastly, not leaving even at the foot of the cross."},
+  strengths:{zh:["<b>勇气真实</b>：不怕面对问题，也不怕承认软弱","<b>敬拜亲近</b>：情绪高低都愿意来到神面前","<b>顺服干脆</b>：想清楚了就说「我愿意」，不拖泥带水"],en:["<b>Brave and honest</b> — you face problems head-on and admit weakness freely","<b>Close in worship</b> — in highs and lows, you still come to God","<b>Decisive in surrender</b> — once it's clear, you say 'yes' without dragging your feet"]},
+  faith:{zh:"你目前的信仰状态偏向“热情而真实”：你和神的关系不是客套式的，祷告和敬拜是你真实的出口。顺境时你信心充足、乐意回应；需要留意的是低谷期——当情绪退潮、环境不顺时，你的信心容易跟着起伏。你的信仰根基是有的，接下来要长的，是在没有感觉、没有掌声的日子里，依然稳定地跟随。",en:"Your faith right now is passionate and real: your relationship with God is no formality — prayer and worship are your genuine outlet. In good seasons you're full of faith and quick to respond. Watch the valleys, though: when feelings fade and circumstances turn, your confidence can swing with your mood. Your foundation is real; what grows next is steady following on days with no feelings and no applause."},
+  growth:{zh:"冲动是你的双刃剑：它让你敢于回应，也可能让你在情绪里说错话、做错决定。另外，你容易把“感觉亲近”当作信仰的温度计——感觉不到时就怀疑自己。试着在行动前多停留一天祷告，也为自己的情绪找一个可以倾诉的属灵伙伴。",en:"Impulsiveness is your double-edged sword: it makes you quick to respond, but it can also make you speak or decide out of raw emotion. You may also treat 'feeling close' as your faith thermometer — and doubt yourself when you feel nothing. Try waiting a full day in prayer before big moves, and find a trusted spiritual friend for your emotional ups and downs."},
+  practice:{zh:"本周选一个安静的早晨，读一遍路加福音 1 章里那首尊主颂，再仿照它写下 5 句属于你自己的祷告——开心、委屈、疑惑都可以写，不修饰、不美化，只写真话。",en:"This week, pick one quiet morning and read the Magnificat in Luke 1, then write five lines of your own prayer in its spirit — joy, grievance, confusion, all of it. No polishing, no performing. Just the truth."},
+  verse:{zh:"“我心尊主为大，我灵以神我的救主为乐。”",en:"“My soul glorifies the Lord and my spirit rejoices in God my Savior.”"},
+  verseRef:{zh:"路加福音 1:46–47",en:"Luke 1:46–47"}
+};
+var CHAR_HANNAH = { seal:{zh:"拿",en:"H"},
+  name:{zh:"哈拿",en:"Hannah"},
+  epithet:{zh:"恒切祷告的人 · 在等候中不放弃",en:"The Persistent Pray-er · She Who Would Not Give Up Waiting"},
+  tagline:{zh:"你不抢风头，却有一种安静的韧性：认准的事，你愿意年复一年地祷告、等候、守候。大家愿意靠着你，因为你让人安心。",en:"You don't chase the spotlight, but you have a quiet toughness: once something is on your heart, you'll pray, wait, and hold on year after year. People lean on you because you make them feel safe."},
+  story:{zh:"她多年没有孩子，受尽委屈，却没有变成一个苦毒的人，而是把眼泪带进祷告里，一年又一年地来到神面前倾心吐意。蒙应允之后，她信守承诺、献上感恩，唱出一首满有信心的诗歌。她的故事说明：长久的等候不是浪费，而是信心的形状。",en:"Childless for years and deeply provoked, she refused to turn bitter. Instead she carried her tears into prayer, pouring out her heart before God year after year. When the answer came, she kept her vow and sang a song full of faith. Her story shows that long waiting is not wasted time — it is the very shape of faith."},
+  strengths:{zh:["<b>祷告恒切</b>：再久没有回应，也不轻易放弃","<b>温柔坚韧</b>：受了委屈不苦毒，依然选择善良","<b>信守承诺</b>：答应过的事，感恩地做到"],en:["<b>Persistent in prayer</b> — no answer yet doesn't make you quit","<b>Gentle yet tough</b> — wronged, you refuse bitterness and still choose kindness","<b>Keeps her vows</b> — what you promise, you fulfil with gratitude"]},
+  faith:{zh:"你目前的信仰状态偏向“稳定而内敛”：你不是靠热情推动的人，而是靠祷告和忍耐走下去，这让你在长期里非常可靠。需要留意的是，你容易把担子都揽在自己身上，眼泪只在祷告里流，人前总是说“没事”。你的下一步成长，是学会交托与分担——也要允许身边的人陪你一起等候、一起流泪。",en:"Your faith right now is steady and quiet: you're not driven by hype but by prayer and endurance, which makes you deeply reliable over the long run. The watch-out: you carry every burden yourself, your tears flow only in prayer, and to everyone else it's always 'I'm fine.' Your next growth step is learning to hand over and share the load — let people wait, and weep, alongside you."},
+  growth:{zh:"你可能会因为“觉得自己不够格、配不上”而错过神给的机会；也小心把等候变成被动：当心里已经清楚下一步时，祷告之后也要勇敢地迈出去。",en:"You may miss opportunities God gives because you feel unworthy or 'not enough.' And beware of waiting turning passive: when the next step is already clear in your heart, after prayer, step out bravely too."},
+  practice:{zh:"本周把一件你等候已久的事写下来，每天为它留 10 分钟专心祷告；另外，主动把这件事告诉一位可信任的人，请她陪你一起守望代祷。",en:"This week, write down the one thing you've waited longest for, and give it ten focused minutes of prayer each day. Then tell one trusted person about it and ask her to watch and pray alongside you."},
+  verse:{zh:"“我从前祷告求得这孩子，耶和华已将我所求的赐给我了。”",en:"“I prayed for this child, and the Lord has granted me what I asked of him.”"},
+  verseRef:{zh:"撒母耳记上 1:27",en:"1 Samuel 1:27"}
+};
+var CHAR_DEBORAH = { seal:{zh:"拉",en:"D"},
+  name:{zh:"底波拉",en:"Deborah"},
+  epithet:{zh:"挺身而出的领袖 · 唤醒众人的先知",en:"The Leader Who Rose Up · The Prophet Who Woke a Nation"},
+  tagline:{zh:"你想到就去做，心里有火、脚下有风。你的热情有感染力，能把一群人从“想想而已”带到“真的动起来”。",en:"You act the moment you're convinced — fire in your heart, wind at your feet. Your passion is contagious: you turn a group from 'someday, maybe' into 'let's actually do this.'"},
+  story:{zh:"她是士师时代唯一的女先知与士师，在棕榈树下为众人断案。当民族被欺压二十年、人人畏缩时，她领受话语，召来将领，亲自陪同上阵，唤醒了全民的信心。得胜之后，她与将领同唱凯歌，把荣耀归给神。她的故事说明：行动力与信心，从来不分性别。",en:"The only female prophet and judge of her era, she held court under a palm tree for all who came. When her nation had been oppressed for twenty years and everyone held back, she received God's word, summoned the commander, and went up to battle alongside him — awakening a whole people's faith. After the victory she sang a song of triumph and gave the glory to God. Her story shows that drive and faith were never about gender."},
+  strengths:{zh:["<b>行动力强</b>：不拖延，认定方向就全力以赴","<b>判断果断</b>：在众人犹豫时，能清楚说出下一步","<b>感染力佳</b>：你的勇气能唤醒整个团队的信心"],en:["<b>Highly driven</b> — no procrastination; once convinced, you're all in","<b>Decisive</b> — when everyone hesitates, you can name the next step clearly","<b>Contagious courage</b> — your bravery awakens the whole team's faith"]},
+  faith:{zh:"你目前的信仰状态偏向“火热而外展”：你乐意分享、乐意服侍，信仰对你而言是行动而不是理论。需要留意的是节奏——长期高速运转容易让你忽略安息与内在生命，只剩“做”而缺少“在”。也请留意说话的锋芒：真理需要讲，但带着恩典讲，人才听得进去。你的下一步，是在热心里加上节制与安静。",en:"Your faith right now is fervent and outward-facing: you love to share and to serve — for you, faith is action, not theory. The watch-out is pace: running at full speed for too long can crowd out rest and inner life, leaving only 'doing' and no 'being'. Mind the sharp edge of your words, too: truth must be spoken, but spoken with grace if people are to receive it. Your next step is adding restraint and stillness to your zeal."},
+  growth:{zh:"你可能因为太在意果效而焦虑：做得多却看不到改变时，容易灰心或对人失去耐心。记得你只负责忠心地召集与前行，胜负从来不在你的 KPI 里。",en:"You may grow anxious over results: when you do a lot but see little change, discouragement — or impatience with people — can creep in. Remember, your job is faithful summoning and moving forward; the victory was never your KPI."},
+  practice:{zh:"本周给自己安排一次真正的安息：半天不处理任何服侍消息，只散步、休息、亲近神；并把一件你最在意果效的事，在祷告中正式“交账”给神。",en:"This week, take a real Sabbath: half a day with no ministry messages — just walk, rest, and be with God. And in prayer, formally hand over the one outcome you've been gripping tightest."},
+  verse:{zh:"“我兴起，我兴起；我兴起，兴起唱歌。”",en:"“Awake, awake, Deborah! Awake, awake, break out in a song!”"},
+  verseRef:{zh:"士师记 5:12",en:"Judges 5:12"}
+};
+var CHARS_MALE = {d:CHARS.d, m:CHARS.m, r:CHAR_JOSEPH, p:CHARS.p, e:CHAR_DANIEL};
+var CHARS_FEMALE = {d:CHAR_MARY, m:CHAR_HANNAH, r:CHARS.r, p:CHAR_DEBORAH, e:CHARS.e};
+var ORDER = ["d","m","r","p","e"];
+
+/* ============ QUESTIONS (options contain NO character names) ============ */
+var QUESTIONS = [
+ {q:{zh:"遇到突如其来的困难，你的第一反应通常是？",en:"When trouble hits out of nowhere, what's your first instinct?"},
+  opts:[
+   {c:"d",zh:"迎上去面对，相信总能找到突围的办法",en:"Face it head-on — there's always a way through"},
+   {c:"m",zh:"先安静下来，祷告寻求清楚的方向",en:"Get quiet first and pray for a clear direction"},
+   {c:"r",zh:"先看看身边谁最需要帮助，陪他一起扛",en:"Check who around me needs help most, and carry it with them"},
+   {c:"p",zh:"立刻行动起来，边做边调整",en:"Act right away and adjust as I go"},
+   {c:"e",zh:"冷静观察局势，等最合适的时机再出手",en:"Observe calmly and wait for the right moment to move"}]},
+ {q:{zh:"在团契或团队里，你最自然的角色是？",en:"In a fellowship or team, which role comes most naturally to you?"},
+  opts:[
+   {c:"m",zh:"统筹安排、让一切有序进行的人",en:"The one who organises and keeps everything in order"},
+   {c:"r",zh:"照顾大家感受、默默补位的人",en:"The one who looks after everyone's feelings and quietly fills the gaps"},
+   {c:"p",zh:"带动气氛、鼓舞士气的人",en:"The one who brings the energy and lifts morale"},
+   {c:"e",zh:"平时话不多，关键时刻出主意的人",en:"The quiet one who speaks up with the key idea at the key moment"},
+   {c:"d",zh:"带头冲在前面、以身作则的人",en:"The one who leads from the front, by example"}]},
+ {q:{zh:"当祷告了很久却还没有回应时，你会？",en:"When you've prayed for a long time with no answer yet, you…"},
+  opts:[
+   {c:"r",zh:"不纠结答案，先去爱身边具体的人",en:"Stop fixating on the answer and go love the people right in front of me"},
+   {c:"p",zh:"更迫切地祷告，也去查考真理寻找答案",en:"Pray even more earnestly, and search the truth for answers"},
+   {c:"e",zh:"安静守望，相信有些事正在看不见的地方预备",en:"Watch quietly, trusting something is being prepared out of sight"},
+   {c:"d",zh:"用诗歌和敬拜，重新把心转向神",en:"Turn my heart back through songs and worship"},
+   {c:"m",zh:"继续耐心等候，相信带领不会迟到",en:"Keep waiting patiently, trusting the guidance won't be late"}]},
+ {q:{zh:"下面哪一种时刻，最容易触动你？",en:"Which moment moves you the most?"},
+  opts:[
+   {c:"p",zh:"看见一个人的生命被真理真实改变",en:"Seeing a life genuinely changed by the truth"},
+   {c:"e",zh:"在关键关头鼓起勇气站出来的那一刻",en:"The moment someone summons the courage to stand up when it counts"},
+   {c:"d",zh:"在敬拜中被深深触摸、忍不住落泪",en:"Being deeply touched in worship, tears and all"},
+   {c:"m",zh:"在困境中忽然看见出路打开",en:"Suddenly seeing a way open up in the middle of a hard place"},
+   {c:"r",zh:"低谷时有人对你说：“别怕，我陪你。”",en:"Someone saying to you in a valley: 'Don't be afraid — I'm with you.'"}]},
+ {q:{zh:"朋友陷入低谷、什么都不想说时，你通常会？",en:"When a friend is in a valley and doesn't want to talk, you usually…"},
+  opts:[
+   {c:"e",zh:"先安静倾听，等他准备好再帮他想办法",en:"Listen quietly first; help find a way when they're ready"},
+   {c:"d",zh:"陪他一起难过，再为他大声祷告",en:"Grieve with them, then pray out loud for them"},
+   {c:"m",zh:"默默为他代祷，给他时间和空间",en:"Intercede silently and give them time and space"},
+   {c:"r",zh:"什么都不问，就陪在他身边不走",en:"Ask nothing — just stay by their side and don't leave"},
+   {c:"p",zh:"用有力量的话语鼓励他重新站起来",en:"Encourage them with strong words to get back on their feet"}]},
+ {q:{zh:"看到明显不公平的事情发生，你会？",en:"When you see something clearly unfair happening, you…"},
+  opts:[
+   {c:"d",zh:"站出来发声，哪怕对方比自己强大",en:"Speak up, even if the other side is stronger than me"},
+   {c:"m",zh:"为受委屈的人出头，去和相关的人交涉",en:"Stand up for the wronged person and go negotiate on their behalf"},
+   {c:"r",zh:"先去安慰受伤的人，陪他走过这一段",en:"Go comfort the hurt person first and walk through it with them"},
+   {c:"p",zh:"公开表达立场，呼吁更多人一起改变",en:"State my position openly and rally more people to change it"},
+   {c:"e",zh:"寻找最有智慧的方式，在对的时机介入",en:"Find the wisest way in, and step in at the right time"}]},
+ {q:{zh:"哪一种亲近神的方式，最让你重新得力？",en:"Which way of drawing near to God restores you most?"},
+  opts:[
+   {c:"m",zh:"清晨安静独处，在祷告中聆听",en:"Quiet solitude in the morning, listening in prayer"},
+   {c:"r",zh:"在日常小事中默默顺服和摆上",en:"Quiet obedience and offering in everyday small things"},
+   {c:"p",zh:"研读真理，与人热烈地分享讨论",en:"Studying the truth and sharing it eagerly with others"},
+   {c:"e",zh:"在大事面前禁食祷告，寻求突破",en:"Fasting and praying before big decisions, seeking a breakthrough"},
+   {c:"d",zh:"弹琴唱歌，尽情地敬拜赞美",en:"Playing and singing — worshipping with abandon"}]},
+ {q:{zh:"身边的人最常这样形容你：",en:"People around you most often describe you as…"},
+  opts:[
+   {c:"r",zh:"温暖贴心，和你在一起很安心",en:"Warm and caring — being with you feels safe"},
+   {c:"p",zh:"充满热情，说话很有感染力",en:"Full of passion — your words are contagious"},
+   {c:"e",zh:"沉着冷静，越到大事越靠得住",en:"Calm and composed — most dependable when things get big"},
+   {c:"d",zh:"很有胆量，真性情，喜怒都写在脸上",en:"Bold and genuine — your feelings are written on your face"},
+   {c:"m",zh:"稳重可靠，交代的事总能放心",en:"Steady and trustworthy — anything handed to you is in safe hands"}]},
+ {q:{zh:"如果只能选一句作你的座右铭，你会选：",en:"If you could pick only one motto, you'd choose:"},
+  opts:[
+   {c:"e",zh:"“也许我站在这里，正是为这样的时刻。”",en:"“Perhaps I am here for such a time as this.”"},
+   {c:"d",zh:"“靠着那加给我力量的，凡事都能做。”",en:"“I can do all things through Him who strengthens me.”"},
+   {c:"m",zh:"“你只管站住，看事情如何成就。”",en:"“Just stand still, and watch how it comes to pass.”"},
+   {c:"r",zh:"“你往哪里去，我也往哪里去。”",en:"“Where you go, I will go.”"},
+   {c:"p",zh:"“忘记背后，努力面前，向着标竿直跑。”",en:"“Forgetting what is behind, I press on toward the goal.”"}]},
+ {q:{zh:"你最希望自己的信仰，最终带给你什么？",en:"What do you most hope your faith will ultimately give you?"},
+  opts:[
+   {c:"p",zh:"影响更多生命，点燃更多人的热心",en:"To influence more lives and ignite more hearts"},
+   {c:"e",zh:"在属于自己的位置上，成就关键的事",en:"To accomplish something pivotal from the place I'm in"},
+   {c:"d",zh:"一颗无论高低起伏都不偏离的心",en:"A heart that never drifts, in highs or lows"},
+   {c:"m",zh:"一生走在呼召里、完成托付的满足感",en:"The fulfilment of walking in my calling and completing what was entrusted to me"},
+   {c:"r",zh:"成为家人和朋友最安心的依靠",en:"To be the surest support my family and friends can lean on"}]}
+];
+
+/* ============ UI STRINGS ============ */
+var UI = {
+ zh:{brand:"趣味测试 · FUN QUIZ",kicker:"圣 经 人 物 · 趣 味 测 试",title:"测一测你更像<br>圣经里的谁？",
+  sub:"10 道题，照着直觉选。没有对错，看看哪位圣经人物的性格与信仰气质，和现在的你最相像。",
+  quote:"“我们晓得万事都互相效力，叫爱神的人得益处。”",quoteRef:"罗马书 8:28",
+  chips:["✦ 10 道选择题","✦ 约 3 分钟","✦ 中 / 英双语","✦ 附信仰状态解析"],
+  howT:"怎么测？",how:["开始前先选择你的性别，结果会从<b>同性别的 5 位圣经人物</b>中为你匹配。","每道题 5 个选项，选<b>最像你平常反应</b>的那一个，不要选“应该选”的。","题目和选项里<b>不会出现任何人物名字</b>，结果揭晓前，你不会知道自己像谁。","测完会得到专属结果卡：人物故事、你的信仰优势、成长空间和一份信仰状态解析。"],
+  start:"开始测试 →",fine:"本测试仅供趣味参考与自我认识，不能替代牧者辅导与真实的信仰生活。",
+  genderKicker:"开 始 之 前 · 先 认 识 你",genderTitle:"先选一下你的性别",genderSub:"结果会按照你的性别，从同性别的圣经人物中为你匹配——男生和女生的候选人物各不相同。",
+  maleName:"我是男生",femaleName:"我是女生",malePool:"从 5 位男性圣经人物中匹配",femalePool:"从 5 位女性圣经人物中匹配",
+  genderNote:"选错了也没关系：答题中点「重新开始」，就能回到这里重新选择。",genderBack:"← 返回",
+  qKick:"凭 直 觉 选 · 不 要 纠 结",back:"← 上一题",restart:"重新开始",
+  qOf:function(a,b){return "第 <b>"+a+"</b> / "+b+" 题";},
+  youAre:"你 最 像 的 是",
+  match:function(n,name){return "10 道题中有 "+n+" 题与「"+name+"」高度相符";},
+  sStory:"祂的故事",sTrait:"你的信仰特质分布",sStrength:"你的信仰优势",sFaith:"你的信仰状态解析",sGrowth:"值得留意的成长空间",sPractice:"给你的本周操练",
+  traitNote:"分布来自你的 10 道题答案：占比最高的一项，就是你最突出的信仰气质；其余的，是你身上同样真实的侧面。",
+  traitNames:{d:"勇气 · 敬拜",m:"稳重 · 带领",r:"忠诚 · 陪伴",p:"热心 · 行动",e:"智慧 · 时机"},
+  share:"分享我的结果",card:"保存结果卡片",copy:"复制分享文案",retake:"再测一次",
+  wechat:"在微信里打开本页时：点右上角「···」可直接转发给好友或分享到朋友圈；也可以保存结果卡片图片，再发给朋友。",
+  footer:"仅供娱乐与自我认识 · 愿你在认识自己的同时，更认识那位爱你的神。",
+  copied:"分享文案已复制，去粘贴给好友吧",copyFail:"复制失败，请长按结果截图分享",saved:"结果卡片已保存，可发给微信好友",shared:"已打开分享",shareUnsupported:"已为你复制文案，去粘贴分享吧",
+  shareText:function(name,epithet){return "我测出来最像圣经里的「"+name+"」——"+epithet+"。你也来测测，你更像圣经里的谁？";},
+  cardTitle:"测一测你更像圣经里的谁？",cardYouAre:"我最像的是",cardFooter:"10 道题 · 趣味测试 · 你也来测测"},
+ en:{brand:"FUN QUIZ · BIBLE CHARACTERS",kicker:"B I B L E &nbsp; C H A R A C T E R &nbsp; Q U I Z",title:"Which Bible Character<br>Are You Most Like?",
+  sub:"10 questions, answer by instinct. There are no wrong answers — discover which Bible character's personality and faith style resemble yours the most.",
+  quote:"“And we know that in all things God works for the good of those who love him.”",quoteRef:"Romans 8:28",
+  chips:["✦ 10 questions","✦ About 3 minutes","✦ 中文 / English","✦ Faith profile included"],
+  howT:"How it works",how:["First pick your gender — your result is matched from <b>5 Bible characters of your own gender</b>.","Each question has 5 options. Pick the one <b>most like your real reaction</b> — not the one you think you should pick.","<b>No character names appear</b> in any question or option. You won't know your match until the reveal.","At the end you'll get your result card: the character's story, your faith strengths, growth areas, and a personal faith-state reading."],
+  start:"Start the Quiz →",fine:"For fun and self-reflection only. This quiz is no substitute for pastoral counsel or a real life of faith.",
+  genderKicker:"BEFORE WE START",genderTitle:"First, tell us your gender",genderSub:"Your result is matched from Bible characters of your own gender — the men's and women's candidate lists are different.",
+  maleName:"I'm male",femaleName:"I'm female",malePool:"Matched from 5 men of the Bible",femalePool:"Matched from 5 women of the Bible",
+  genderNote:"Picked the wrong one? No problem — tap “Restart” during the quiz to come back here and choose again.",genderBack:"← Back",
+  qKick:"TRUST YOUR INSTINCT",back:"← Back",restart:"Restart",
+  qOf:function(a,b){return "Question <b>"+a+"</b> of "+b;},
+  youAre:"YOU ARE MOST LIKE",
+  match:function(n,name){return n+" of your 10 answers matched "+name+" most closely";},
+  sStory:"Their Story",sTrait:"Your Faith-Trait Mix",sStrength:"Your Faith Strengths",sFaith:"Your Faith State, Read Closely",sGrowth:"A Growth Edge to Watch",sPractice:"Your Practice for This Week",
+  traitNote:"This mix comes from your 10 answers: the largest share is your most prominent faith quality — the rest are real sides of you, too.",
+  traitNames:{d:"Courage · Worship",m:"Steadiness · Leading",r:"Loyalty · Presence",p:"Zeal · Action",e:"Wisdom · Timing"},
+  share:"Share My Result",card:"Save Result Card",copy:"Copy Share Text",retake:"Take It Again",
+  wechat:"Opening this page in WeChat? Tap “···” in the top-right corner to forward it to friends or Moments — or save the result card image and send that.",
+  footer:"For fun and self-reflection · May you know yourself better — and know the God who loves you, even more.",
+  copied:"Share text copied — paste it to a friend!",copyFail:"Copy failed — screenshot your result to share",saved:"Result card saved — send it to your friends",shared:"Share opened",shareUnsupported:"Share text copied instead — paste it anywhere",
+  shareText:function(name,epithet){return "I got "+name+" — "+epithet+". Take the quiz: which Bible character are you most like?";},
+  cardTitle:"Which Bible Character Are You?",cardYouAre:"I am most like",cardFooter:"10 questions · Fun quiz · Try it yourself"}
+};
+
+/* ============ STATE & LOGIC ============ */
+var lang="zh", cur=0, answers=[], result=null, counts=null, gender=null;
+var $=function(id){return document.getElementById(id);};
+function t(){return UI[lang];}
+function show(id){var s=["screen-intro","screen-gender","screen-quiz","screen-result"];for(var i=0;i<s.length;i++)$(s[i]).classList.toggle("active",s[i]===id);window.scrollTo(0,0);}
+
+function applyLang(){
+  document.body.classList.toggle("en",lang==="en");
+  document.documentElement.lang = lang==="en"?"en":"zh-CN";
+  $("langZh").classList.toggle("on",lang==="zh");
+  $("langEn").classList.toggle("on",lang==="en");
+  var u=t();
+  $("brandText").textContent=u.brand;
+  $("heroKicker").innerHTML=u.kicker;
+  $("heroTitle").innerHTML=u.title;
+  $("heroSub").textContent=u.sub;
+  $("heroQuote").childNodes[0].textContent=u.quote;
+  $("heroQuoteRef").textContent=u.quoteRef;
+  var chips=document.querySelectorAll(".chip");for(var i=0;i<chips.length;i++)chips[i].textContent=u.chips[i];
+  $("howTitle").textContent=u.howT;
+  $("howList").innerHTML=u.how.map(function(x){return "<li>"+x+"</li>";}).join("");
+  $("startBtn").textContent=u.start;
+  $("introFine").textContent=u.fine;
+  $("genderKicker").textContent=u.genderKicker;
+  $("genderTitle").textContent=u.genderTitle;
+  $("genderSub").textContent=u.genderSub;
+  $("maleName").textContent=u.maleName;
+  $("femaleName").textContent=u.femaleName;
+  $("malePool").textContent=u.malePool;
+  $("femalePool").textContent=u.femalePool;
+  $("genderNote").textContent=u.genderNote;
+  $("genderBackBtn").textContent=u.genderBack;
+  $("qKicker").textContent=u.qKick;
+  $("backBtn").textContent=u.back;
+  $("restartBtn1").textContent=u.restart;
+  $("rYouAre").textContent=u.youAre;
+  $("sStoryT").textContent=u.sStory; $("sTraitT").textContent=u.sTrait;
+  $("sStrengthT").textContent=u.sStrength; $("sFaithT").textContent=u.sFaith;
+  $("sGrowthT").textContent=u.sGrowth; $("sPracticeT").textContent=u.sPractice;
+  $("traitNote").textContent=u.traitNote;
+  $("shareBtnT").textContent=u.share; $("cardBtnT").textContent=u.card;
+  $("copyBtnT").textContent=u.copy; $("retakeBtnT").textContent=u.retake;
+  $("wechatHint").textContent=u.wechat; $("footerNote").textContent=u.footer;
+  if($("screen-quiz").classList.contains("active")) renderQ();
+  if(result && $("screen-result").classList.contains("active")) renderResult();
+}
+
+function renderQ(){
+  var u=t(), q=QUESTIONS[cur];
+  $("qCount").innerHTML=u.qOf(cur+1,QUESTIONS.length);
+  $("qPct").textContent=Math.round(cur/QUESTIONS.length*100)+"%";
+  $("barFill").style.width=(cur/QUESTIONS.length*100)+"%";
+  $("qTitle").textContent=q.q[lang];
+  $("backBtn").disabled = cur===0;
+  var box=$("opts"); box.innerHTML="";
+  q.opts.forEach(function(o,idx){
+    var b=document.createElement("button");
+    b.type="button"; b.className="opt"+(answers[cur]===o.c?" sel":"");
+    b.innerHTML='<span class="dot">✓</span><span></span>';
+    b.querySelectorAll("span")[1].textContent=o[lang];
+    b.addEventListener("click",function(){
+      answers[cur]=o.c;
+      var all=box.querySelectorAll(".opt");all.forEach(function(x){x.classList.remove("sel");});
+      b.classList.add("sel");
+      setTimeout(function(){
+        if(cur<QUESTIONS.length-1){cur++;renderQ();}
+        else finish();
+      },260);
+    });
+    box.appendChild(b);
+  });
+}
+
+function finish(){
+  counts={d:0,m:0,r:0,p:0,e:0};
+  answers.forEach(function(c){if(c)counts[c]++;});
+  var best="d",bestN=-1;
+  // tie-break: the tied character chosen latest in the quiz wins
+  ORDER.forEach(function(k){ if(counts[k]>bestN){bestN=counts[k];best=k;} });
+  if(ORDER.filter(function(k){return counts[k]===bestN;}).length>1){
+    for(var i=answers.length-1;i>=0;i--){ if(counts[answers[i]]===bestN){best=answers[i];break;} }
+  }
+  result=best;
+  renderResult();
+  show("screen-result");
+}
+
+function renderResult(){
+  var u=t(), c=CHARS[result];
+  $("rSeal").textContent=c.seal[lang];
+  $("rName").textContent=c.name[lang];
+  $("rEpithet").textContent=c.epithet[lang];
+  $("rTagline").textContent=c.tagline[lang];
+  $("rMatch").textContent=u.match(counts[result],c.name[lang]);
+  $("rStory").textContent=c.story[lang];
+  $("rStrengths").innerHTML=c.strengths[lang].map(function(x){return "<li>"+x+"</li>";}).join("");
+  $("rFaith").textContent=c.faith[lang];
+  $("rGrowth").textContent=c.growth[lang];
+  $("rPractice").textContent=c.practice[lang];
+  $("rVerse").textContent=c.verse[lang];
+  $("rVerseRef").textContent=c.verseRef[lang];
+  var bars=$("traitBars"); bars.innerHTML="";
+  ORDER.slice().sort(function(a,b){return counts[b]-counts[a];}).forEach(function(k,i){
+    var pct=Math.round(counts[k]/QUESTIONS.length*100);
+    var row=document.createElement("div"); row.className="trait-row"+(i===0?" top":"");
+    row.innerHTML='<span class="tname"></span><span class="tbar"><i style="width:'+pct+'%"></i></span><span class="tpct">'+pct+'%</span>';
+    row.querySelector(".tname").textContent=CHARS[k].name[lang];
+    bars.appendChild(row);
+  });
+  // second line: trait labels under bars in one note row
+  var labels=ORDER.slice().sort(function(a,b){return counts[b]-counts[a];}).map(function(k){return CHARS[k].name[lang]+"（"+u.traitNames[k]+"）";});
+  $("traitNote").textContent=u.traitNote+" "+labels.join(" · ");
+}
+
+function toast(msg){var el=$("toast");el.textContent=msg;el.classList.add("show");setTimeout(function(){el.classList.remove("show");},2400);}
+function shareText(){var c=CHARS[result];return t().shareText(c.name[lang],c.epithet[lang]);}
+
+function doShare(){
+  var txt=shareText();
+  if(navigator.share){
+    navigator.share({title:document.title,text:txt}).then(function(){toast(t().shared);}).catch(function(){});
+  }else{
+    copyText(txt,true);
+  }
+}
+function copyText(txt,fromShare){
+  function ok(){toast(fromShare?t().shareUnsupported:t().copied);}
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(ok).catch(function(){fallback();});
+  }else fallback();
+  function fallback(){
+    var ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand("copy");ok();}catch(e){toast(t().copyFail);}
+    document.body.removeChild(ta);
+  }
+}
+
+function saveCard(){
+  var c=CHARS[result], u=t();
+  var cv=$("cardCanvas"), ctx=cv.getContext("2d");
+  var W=750,H=1080;
+  var dark=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;
+  ctx.fillStyle=dark?"#221e19":"#fffdf9"; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle=dark?"#d3ab55":"#8a6d2f"; ctx.lineWidth=3; ctx.strokeRect(28,28,W-56,H-56);
+  ctx.lineWidth=1; ctx.strokeRect(42,42,W-84,H-84);
+  ctx.textAlign="center";
+  ctx.fillStyle=dark?"#d3ab55":"#8a6d2f";
+  ctx.font="600 26px sans-serif";
+  ctx.fillText(u.cardTitle,W/2,130);
+  ctx.fillRect(W/2-40,158,80,3);
+  // seal
+  ctx.beginPath(); ctx.arc(W/2,268,64,0,Math.PI*2);
+  ctx.fillStyle=dark?"#332b1c":"#f0e6cf"; ctx.fill();
+  ctx.strokeStyle=dark?"#d3ab55":"#8a6d2f"; ctx.lineWidth=2.5; ctx.stroke();
+  ctx.fillStyle=dark?"#e8c87e":"#6f5620";
+  ctx.font="900 62px 'Noto Serif SC',serif";
+  ctx.fillText(c.seal[lang],W/2,292);
+  ctx.fillStyle=dark?"#a89a80":"#857a68"; ctx.font="22px sans-serif";
+  ctx.fillText(u.cardYouAre,W/2,392);
+  ctx.fillStyle=dark?"#f2ead9":"#211c15";
+  ctx.font="900 96px 'Noto Serif SC',serif";
+  ctx.fillText(c.name[lang],W/2,500);
+  ctx.fillStyle=dark?"#e8c87e":"#6f5620"; ctx.font="600 30px 'Noto Serif SC',serif";
+  wrapText(ctx,c.epithet[lang],W/2,556,W-180,42);
+  ctx.fillStyle=dark?"#d8cdb6":"#4a4236"; ctx.font="27px sans-serif";
+  var endY=wrapText(ctx,c.tagline[lang],W/2,640,W-170,44);
+  ctx.fillStyle=dark?"#e8c87e":"#6f5620"; ctx.font="italic 600 29px 'Noto Serif SC',serif";
+  endY=wrapText(ctx,c.verse[lang],W/2,endY+56,W-190,44);
+  ctx.fillStyle=dark?"#a89a80":"#857a68"; ctx.font="22px sans-serif";
+  ctx.fillText(c.verseRef[lang],W/2,endY+8);
+  ctx.fillStyle=dark?"#a89a80":"#857a68"; ctx.font="21px sans-serif";
+  ctx.fillText(u.cardFooter,W/2,H-92);
+  var a=document.createElement("a");
+  a.download="bible-character-result.png";
+  a.href=cv.toDataURL("image/png");
+  a.click();
+  toast(t().saved);
+}
+function wrapText(ctx,text,x,y,maxW,lh){
+  var chars=text.split(""),line="",yy=y;
+  // word-aware for latin, char-aware for CJK mixed: split by words if spaces exist mostly
+  var units = /[\u4e00-\u9fff]/.test(text) ? chars : text.split(" ");
+  var joiner = /[\u4e00-\u9fff]/.test(text) ? "" : " ";
+  for(var i=0;i<units.length;i++){
+    var test=line?line+joiner+units[i]:units[i];
+    if(ctx.measureText(test).width>maxW&&line){ctx.fillText(line,x,yy);yy+=lh;line=units[i];}
+    else line=test;
+  }
+  if(line)ctx.fillText(line,x,yy);
+  return yy+lh;
+}
+
+/* ============ EVENTS ============ */
+$("langZh").addEventListener("click",function(){lang="zh";applyLang();});
+$("langEn").addEventListener("click",function(){lang="en";applyLang();});
+$("startBtn").addEventListener("click",function(){show("screen-gender");});
+function pickGender(g){
+  gender=g;
+  CHARS = (g==="female") ? CHARS_FEMALE : CHARS_MALE;
+  cur=0;answers=[];result=null;
+  show("screen-quiz");renderQ();
+}
+$("genderMale").addEventListener("click",function(){pickGender("male");});
+$("genderFemale").addEventListener("click",function(){pickGender("female");});
+$("genderBackBtn").addEventListener("click",function(){show("screen-intro");});
+$("backBtn").addEventListener("click",function(){if(cur>0){cur--;renderQ();}});
+$("restartBtn1").addEventListener("click",function(){cur=0;answers=[];result=null;show("screen-intro");});
+$("retakeBtn").addEventListener("click",function(){cur=0;answers=[];result=null;show("screen-intro");});
+$("shareBtn").addEventListener("click",doShare);
+$("copyBtn").addEventListener("click",function(){copyText(shareText(),false);});
+$("cardBtn").addEventListener("click",saveCard);
+applyLang();
+</script>
+</body>
+</html>
